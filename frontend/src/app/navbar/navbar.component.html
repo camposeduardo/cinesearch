@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-config">
+  <a class="navbar-brand" routerLink="/Home"><img src="../../assets/logo-cinesearch.webp" alt="" class="rounded-circle" style="width: 110px; height: 110px;"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse my-3 text-secondary" id="navbarNav">
+    <ul class="navbar-nav mr-auto ps-3 fs-5">
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="">Home</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" *ngIf="signInButton; else signOut">
+        <a class="nav-link" routerLink="/SignIn">Sign In</a>
+      </li>
+      <ng-template #signOut>
+        <li class="nav-item" >
+          <a class="nav-link" href="" (click)="logout()">Sign Out</a>
+        </li>
+      </ng-template>
+
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/Watchlist" (click)="getWatchlist()">Watchlist</a>
+      </li>
+    </ul>
+    <form class="form-inline d-flex ms-auto" (submit)="searchMovies()">
+      <input class="form-control input-settings" type="search" placeholder="Search for a title" aria-label="Search" [(ngModel)]="titleToSearch" name="titleToSearch">
+      <button type="submit" class="btn btn-secondary ms-1"(keyup.enter)="searchMovies()">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>

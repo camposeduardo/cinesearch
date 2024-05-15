@@ -1,0 +1,19 @@
+.watchlist-movie img{
+  width: 140px;
+  height: 200px;
+}
+
+.watchlist-card {
+  background-color: #4a2d7d;
+}
+
+h1 {
+  font-family: "Noto Sans Display", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+

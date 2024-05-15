@@ -1,0 +1,12 @@
+ul {
+  list-style-type: none;
+}
+
+.modal-poster-settings {
+  width: 200px;
+  height: 300px;
+}
+
+a {
+  text-decoration: none;
+}

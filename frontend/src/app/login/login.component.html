@@ -1,0 +1,66 @@
+<div class="d-flex align-items-center vh-100 login-settings">
+  <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card bg-dark text-light rounded-4">
+                <div class="card-body py-4">
+                    <h4 class="card-title text-center mb-4">Sign in</h4>
+                    <form #sigInForm="ngForm" (ngSubmit)="onSubmitSignIn()">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Email</label>
+                            <input type="text" class="form-control" name="email" placeholder="Enter email" ngModel required email #loginEmail="ngModel">
+                            <div class="my-3">
+                              <small *ngIf="loginEmail.invalid && loginEmail.touched">Email is a required field</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Enter password" ngModel required #loginPassword="ngModel">
+                            <div class="my-3">
+                              <small *ngIf="loginPassword.invalid && loginPassword.touched">Password is a required field</small>
+                            </div>
+                        </div>
+                        <div class="d-grid pt-3">
+                            <button type="submit" class="btn btn-success" [disabled]="!sigInForm.valid">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card bg-dark text-light rounded-4">
+                <div class="card-body py-4">
+                    <h4 class="card-title text-center mb-4">Create Account</h4>
+                    <form #registerForm="ngForm" (ngSubmit)="onSubmitRegister()">
+                        <div class="mb-3">
+                            <label for="register-first-name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" name="name" placeholder="Enter first and last name" ngModel required #name="ngModel">
+                            <div class="my-3">
+                              <small *ngIf="name.invalid && name.touched">Name is a required field</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="register-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="Enter email" ngModel required email #registerEmail="ngModel">
+                            <div class="my-3">
+                              <small *ngIf="registerEmail.invalid && registerEmail.touched">Email is a required field</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="register-password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Enter password" ngModel required #registerPassword="ngModel">
+                            <div class="my-3">
+                              <small *ngIf="registerPassword.invalid && registerPassword.touched">Password is a required field</small>
+                            </div>
+                        </div>
+                        <div class="d-grid pt-3">
+                            <button type="submit" class="btn btn-warning" [disabled]="!registerForm.valid">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+

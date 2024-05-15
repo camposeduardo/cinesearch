@@ -1,0 +1,14 @@
+.home-settings {
+  background-color:  #0c0518;
+  font-family: "Noto Sans Display", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+.poster-home-settings {
+  width: 260px;
+  height: 360px;
+}
