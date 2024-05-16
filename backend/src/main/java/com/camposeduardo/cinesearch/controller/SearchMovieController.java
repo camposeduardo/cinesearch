@@ -26,7 +26,6 @@ public class SearchMovieController {
 
     @GetMapping("/imdb/{imdbId}")
     public ResponseEntity<MovieInfo> searchMovieByImdbId(@PathVariable String imdbId) {
-        System.out.println("by imdbid");
         return ResponseEntity.ok(movieService.searchByImdbId(imdbId));
     }
 }

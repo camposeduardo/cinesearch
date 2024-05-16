@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MovieInfo } from '../model/MovieInfo';
 import { BehaviorSubject, map } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { Movie } from '../model/Movie';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,23 +14,16 @@ export class WatchlistService {
   private watchlistMoviesSubject = new BehaviorSubject<MovieInfo[] | null>(null);
   watchlistMovies = this.watchlistMoviesSubject.asObservable();
 
-  constructor(private http: HttpClient){}
+  constructor(private http: HttpClient, private authService: AuthenticationService){}
 
   addToWatchlist(movie: MovieInfo, email: string) {
-    // Mudar para interceptors
-    const token = JSON.parse(localStorage.getItem("token")!).token;
-    return this.http.post<MovieInfo[]>(`${environment.apiUrl}/watchlist/add`, movie,{headers: {'Authorization': `Bearer ${token}`}, params: {
+    return this.http.post<MovieInfo[]>(`${environment.apiUrl}/watchlist/add`, movie, {params: {
       email: email
-    }})
-    .pipe(map(response => {
-
-    }));
+    }});
   }
 
-  getAllMoviesInWatchlist( email: string) {
-    // Mudar para interceptors
-    const token = JSON.parse(localStorage.getItem("token")!).token;
-    return this.http.get<MovieInfo[]>(`${environment.apiUrl}/watchlist`,{headers: {'Authorization': `Bearer ${token}`}, params: {
+  getAllMoviesInWatchlist(email: string) {
+    return this.http.get<MovieInfo[]>(`${environment.apiUrl}/watchlist`, {params: {
       email: email
     }})
     .pipe(map(response => {

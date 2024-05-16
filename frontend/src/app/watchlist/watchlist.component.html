@@ -4,8 +4,65 @@
 <div class="container my-3">
   <div class="row py-3">
     <div class="col-lg-2 mb-5" *ngFor="let movie of watchlistMovies">
-      <div class="watchlist-movie"  >
-        <img class="border border-1" [src]="movie.poster">
+      <div class="watchlist-movie">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#info"
+          (click)="getMovieInformation(movie.imdbId)"><img class="border border-1" [src]="movie.poster" alt=""></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title text-dark" id="exampleModalLabel">{{movieInfo?.title}}</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <div class="d-flex justify-content-start mb-5">
+          <div>
+            <img class="modal-poster-settings" [src]="movieInfo?.poster" alt="">
+            <span><b>IMDB Rating: </b>
+              <p>{{movieInfo?.imdbRating}}</p>
+            </span>
+            <span><b>Rated: </b>
+              <p>{{movieInfo?.rated}}</p>
+            </span>
+          </div>
+          <div class="movie-info ms-3 d-block">
+            <div>
+              <span><b>Released: </b>
+                <p>{{movieInfo?.released}}</p>
+              </span>
+            </div>
+            <div>
+              <span><b>Runtime: </b>
+                <p>{{movieInfo?.runtime}}</p>
+              </span>
+            </div>
+            <div>
+              <span><b>Plot: </b>
+                <p>{{movieInfo?.plot}}</p>
+              </span>
+            </div>
+            <div>
+              <span><b>Genre: </b>
+                <p>{{movieInfo?.genre}}</p>
+              </span>
+            </div>
+            <div>
+              <span><b>Director: </b>
+                <p>{{movieInfo?.director}}</p>
+              </span>
+            </div>
+            <div>
+              <span><b>Actors:</b>
+                <p> {{movieInfo?.actors}}</p>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

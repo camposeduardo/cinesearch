@@ -11,6 +11,7 @@ import { MovieInfo } from '../model/MovieInfo';
 export class WatchlistComponent {
 
   watchlistMovies: MovieInfo[] | null= [];
+  movieInfo: MovieInfo | undefined;
 
   constructor(private watchlistService: WatchlistService) {}
 
@@ -22,6 +23,10 @@ export class WatchlistComponent {
     this.watchlistService.watchlistMovies.subscribe(data => {
       this.watchlistMovies = data;
     })
+  }
+
+  getMovieInformation(imdbId: string) {
+    this.movieInfo = this.watchlistMovies?.find((movie) => movie.imdbId === imdbId);
   }
 
 }
