@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WatchlistService } from '../service/watchlist.service';
 import { Movie } from '../model/Movie';
 import { MovieInfo } from '../model/MovieInfo';
+import { AuthenticationService } from '../service/authentication.service';
 
 @Component({
   selector: 'app-watchlist',
@@ -10,19 +11,21 @@ import { MovieInfo } from '../model/MovieInfo';
 })
 export class WatchlistComponent {
 
-  watchlistMovies: MovieInfo[] | null= [];
+  watchlistMovies: MovieInfo[]  = [];
   movieInfo: MovieInfo | undefined;
 
-  constructor(private watchlistService: WatchlistService) {}
+  constructor(private watchlistService: WatchlistService, private authService: AuthenticationService) {}
 
-  ngOnInit() {
+  ngOnInit () {
     this.getAllMoviesInWatchlist();
   }
 
   getAllMoviesInWatchlist() {
-    this.watchlistService.watchlistMovies.subscribe(data => {
-      this.watchlistMovies = data;
-    })
+    this.watchlistService.getAllMoviesInWatchlist(this.authService.getEmail()).subscribe(
+      data => {
+        this.watchlistMovies = data;
+      }
+    )
   }
 
   getMovieInformation(imdbId: string) {

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MovieService } from '../service/movie.service';
 import { Movie } from '../model/Movie';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { MovieInfo } from '../model/MovieInfo';
 import { WatchlistService } from '../service/watchlist.service';
 import { AuthenticationService } from '../service/authentication.service';
@@ -43,22 +43,14 @@ export class SearchComponent {
     this.movieService.searchMovieByImdbId(imdbId).subscribe(
       response => {
         if (response != null) {
-          console.log("search");
           this.movieInfo = response;
-          console.log(this.movieInfo);
         }
-
       }
     );
   }
 
   addToWatchlist(movie: MovieInfo) {
-    const email = this.authService.getEmail();
-    this.watchlistService.addToWatchlist(movie, email).subscribe(
-      response => {
-        console.log(response);
-      }
-    )
+    this.watchlistService.addToWatchlist(movie, this.authService.getEmail()).subscribe();
   }
 }
 

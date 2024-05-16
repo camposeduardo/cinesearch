@@ -30,49 +30,52 @@ public class WatchlistService {
     private MovieService movieService;
 
     public MovieInfo addMovieToWatchlist(String email, MovieInfo movie) throws Exception {
-
-        Optional<Integer> watchListId = userRepository.findWatchlistIdByEmail(email);
-
-        if (watchListId.isEmpty()) {
-            return null;
-        }
-
-        Optional<Watchlist> watchlist = watchlistRepository.findById(watchListId.get());
-
+        Watchlist watchlist = getWatchlist(email);
         MovieInfo movieInDB = movieService.getMovieByImdbId(movie.getImdbId());
 
         if (movieInDB == null) {
             movie = movieService.addMovie(movie);
         } else {
-            Optional<List<Integer>> allUserMovies = watchlistMovieRepository.
-                    findMovieIdByWatchlistId(watchListId.get());
-
-            if (!allUserMovies.get().contains(movieInDB.getId())) {
-                movie = movieInDB;
-            }
-            else {
+            boolean movieInWatchlist = checkIfMovieExistsInWatchlist(watchlist.getId(), movieInDB);
+            if (movieInWatchlist) {
                 throw new InputMismatchException("Movie already in watchlist");
             }
-        }
 
+        }
         WatchlistMovie watchlistMovie = new WatchlistMovie();
         watchlistMovie.setMovie(movie);
-        watchlistMovie.setWatchlist(watchlist.get());
+        watchlistMovie.setWatchlist(watchlist);
         watchlistMovieRepository.save(watchlistMovie);
         return movie;
     }
 
     public List<MovieInfo>getAllMoviesInWatchlist(String email) {
 
-        Optional<Integer> watchlistId = userRepository.findWatchlistIdByEmail(email);
+        Watchlist watchlist = getWatchlist(email);
 
-        if (watchlistId.isEmpty()) {
+        if (watchlist == null) {
             return null;
         }
 
         Optional<List<MovieInfo>> allMoviesInWatchlist = watchlistMovieRepository
-                .findMovieByWatchlistId(watchlistId.get());
+                .findMovieByWatchlistId(watchlist.getId());
 
         return allMoviesInWatchlist.get();
+    }
+
+    public Watchlist getWatchlist(String email) {
+        Optional<Integer> watchListId = userRepository.findWatchlistIdByEmail(email);
+
+        if (watchListId.isEmpty()) {
+            return null;
+        }
+
+        return watchlistRepository.findById(watchListId.get()).orElse(null);
+    }
+
+    public boolean checkIfMovieExistsInWatchlist(Integer watchlistId, MovieInfo movie) {
+        Optional<List<Integer>> allUserMovies = watchlistMovieRepository.
+                findMovieIdByWatchlistId(watchlistId);
+        return allUserMovies.get().contains(movie.getId());
     }
 }
