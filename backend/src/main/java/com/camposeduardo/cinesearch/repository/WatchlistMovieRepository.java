@@ -19,6 +19,8 @@ public interface WatchlistMovieRepository extends JpaRepository<WatchlistMovie, 
 
     @Query("SELECT mi FROM MovieInfo mi WHERE mi.id IN " +
             "(SELECT wm.movie.id FROM WatchlistMovie wm WHERE wm.watchlist.id = :watchlistId)")
-    Optional<List<MovieInfo>> findMovieByWatchlistId(Integer watchlistId);
+    Optional<List<MovieInfo>> findMoviesByWatchlistId(Integer watchlistId);
+
+    Optional<WatchlistMovie> findByWatchlistIdAndMovieId(Integer watchlistId, Integer movieId);
 
 }

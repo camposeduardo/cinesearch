@@ -31,7 +31,7 @@ export class AuthenticationService {
   register(user: User) {
     return this.http.post<any>(`${environment.apiUrl}/register`, user).pipe(map(response => {
       this.userSubject?.next(response);
-    }));;
+    }));
   }
 
   getEmail() {
@@ -43,7 +43,7 @@ export class AuthenticationService {
       let email = payloadObj.sub;
       return email;
     }
-    return "";
+    return null;
   }
 
   getToken() {

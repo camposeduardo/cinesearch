@@ -3,6 +3,7 @@ import { MovieService } from '../service/movie.service';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../service/authentication.service';
 import { WatchlistService } from '../service/watchlist.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',
@@ -20,8 +21,13 @@ export class NavbarComponent {
 
   searchMovies() {
     this.movieService.searchRelatedMovies(this.titleToSearch).subscribe(
-      response => {
-        this.router.navigate(["Search", this.titleToSearch]);
+      {
+        next: (response) => {
+          this.router.navigate(["Search", this.titleToSearch]);
+        },
+        error: (error: HttpErrorResponse) => {
+          // Some logic here
+        }
       }
     );
   }
@@ -45,7 +51,7 @@ export class NavbarComponent {
   }
 
   getWatchlist() {
-    this.watchlistService.getAllMoviesInWatchlist("eduardo@email.com").subscribe()
+    this.watchlistService.getAllMoviesInWatchlist("eduardo@email.com").subscribe();
   }
 
 }

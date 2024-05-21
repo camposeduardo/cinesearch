@@ -36,11 +36,12 @@ public class WatchlistService {
         if (movieInDB == null) {
             movie = movieService.addMovie(movie);
         } else {
-            boolean movieInWatchlist = checkIfMovieExistsInWatchlist(watchlist.getId(), movieInDB);
-            if (movieInWatchlist) {
+            if (checkIfMovieExistsInWatchlist(watchlist.getId(), movieInDB)) {
                 throw new InputMismatchException("Movie already in watchlist");
             }
-
+            else {
+                movie = movieInDB;
+            }
         }
         WatchlistMovie watchlistMovie = new WatchlistMovie();
         watchlistMovie.setMovie(movie);
@@ -58,7 +59,7 @@ public class WatchlistService {
         }
 
         Optional<List<MovieInfo>> allMoviesInWatchlist = watchlistMovieRepository
-                .findMovieByWatchlistId(watchlist.getId());
+                .findMoviesByWatchlistId(watchlist.getId());
 
         return allMoviesInWatchlist.get();
     }
@@ -76,6 +77,29 @@ public class WatchlistService {
     public boolean checkIfMovieExistsInWatchlist(Integer watchlistId, MovieInfo movie) {
         Optional<List<Integer>> allUserMovies = watchlistMovieRepository.
                 findMovieIdByWatchlistId(watchlistId);
+        MovieInfo movieInDB = movieService.getMovieByImdbId(movie.getImdbId());
         return allUserMovies.get().contains(movie.getId());
+    }
+
+    public void removeMovieFromWatchlist(String email, MovieInfo movieInfo) {
+        Watchlist watchlist = getWatchlist(email);
+
+        if (watchlist == null) {
+            throw new RuntimeException("Watchlist is null");
+        }
+
+        if (!checkIfMovieExistsInWatchlist(watchlist.getId(), movieInfo)) {
+            throw new RuntimeException("Movie doesnt exists in watchlist");
+        }
+
+        MovieInfo movie = movieService.getMovieByImdbId(movieInfo.getImdbId());
+        Optional<WatchlistMovie> wm = watchlistMovieRepository.findByWatchlistIdAndMovieId(watchlist.getId(),
+                movie.getId());
+
+        if (!wm.isPresent()) {
+            throw new RuntimeException("Movie doesnt exists in watchlist");
+        }
+
+        watchlistMovieRepository.delete(wm.get());
     }
 }

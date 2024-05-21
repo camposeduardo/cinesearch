@@ -21,11 +21,17 @@ public class WatchlistController {
     @PostMapping("/add")
     public ResponseEntity<MovieInfo> addToWatchlist(@RequestBody MovieInfo movie,
                                                     @RequestParam(value="email") String email) throws Exception {
-        return ResponseEntity.ok(watchlistService.addMovieToWatchlist(email,movie));
+        return ResponseEntity.ok().body(watchlistService.addMovieToWatchlist(email,movie));
     }
 
     @GetMapping
     public ResponseEntity<List<MovieInfo>> getWatchlistMovies(@RequestParam(value="email") String email) {
-        return ResponseEntity.ok(watchlistService.getAllMoviesInWatchlist(email));
+        return ResponseEntity.ok().body(watchlistService.getAllMoviesInWatchlist(email));
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<MovieInfo> removeMovieFromWatchlist(@RequestHeader(value="email") String email, @RequestBody MovieInfo movie) {
+        watchlistService.removeMovieFromWatchlist(email, movie);
+        return ResponseEntity.noContent().build();
     }
 }

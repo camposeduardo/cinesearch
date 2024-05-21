@@ -2,7 +2,6 @@
   <div class="text-light text-center mb-5">
     <h3>"{{titleToSearch}}" no CineSearch</h3>
   </div>
-
   <div class="d-flex justify-content-start text-light mb-5" *ngFor="let movie of moviesFounded">
     <div>
       <a href="#" data-bs-toggle="modal" data-bs-target="#info" (click)="getMovieInformation(movie.imdbId)"><img
@@ -14,6 +13,7 @@
           <div>
             <span>
               <h4>{{movie!.title}}</h4>
+
             </span>
           </div>
           <div>
@@ -25,13 +25,15 @@
   </div>
 </div>
 
+
 <div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title text-dark" id="exampleModalLabel">{{movieInfo?.title}}</h3>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button #closeModal type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <app-alert class="justify-content-center" [message]="alertMessage" [type]="alertType"></app-alert>
       <div class="modal-body text-dark">
         <div class="d-flex justify-content-start mb-5">
           <div>

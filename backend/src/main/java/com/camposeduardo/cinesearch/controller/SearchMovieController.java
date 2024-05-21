@@ -21,11 +21,11 @@ public class SearchMovieController {
 
     @GetMapping("/{title}")
     public ResponseEntity<List<Movie>> searchMovie(@PathVariable String title) {
-        return ResponseEntity.ok(movieService.search(title));
+        return ResponseEntity.ok().body(movieService.search(title));
     }
 
     @GetMapping("/imdb/{imdbId}")
     public ResponseEntity<MovieInfo> searchMovieByImdbId(@PathVariable String imdbId) {
-        return ResponseEntity.ok(movieService.searchByImdbId(imdbId));
+        return ResponseEntity.ok().body(movieService.searchByImdbId(imdbId) );
     }
 }

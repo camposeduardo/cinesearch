@@ -1,0 +1,5 @@
+<div *ngIf="message" class="alert alert-success alert-dismissible fade show text-center"
+[ngClass]="{'alert-success': type === 'success', 'alert-danger': type === 'danger'}"role="alert">
+  <strong class="text-center">{{ message }}</strong>
+  <button type="button" class="btn-close ms-3" (click)="closeAlert()"></button>
+</div>

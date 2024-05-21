@@ -17,7 +17,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title text-dark" id="exampleModalLabel">{{movieInfo?.title}}</h3>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button #close type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-dark">
         <div class="d-flex justify-content-start mb-5">
@@ -29,8 +29,8 @@
             <span><b>Rated: </b>
               <p>{{movieInfo?.rated}}</p>
             </span>
-            <button class="btn btn-success"><i
-              class="bi bi-bookmark-plus-fill"></i>Remove from watchlist</button>
+            <button class="btn btn-danger" (click)="onRemoveMovie(movieInfo!)"><i
+              class="bi bi-bookmark-plus-fill" ></i>Remove from watchlist</button>
           </div>
           <div class="movie-info ms-3 d-block">
             <div>
@@ -69,3 +69,5 @@
     </div>
   </div>
 </div>
+
+

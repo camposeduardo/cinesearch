@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { SearchComponent } from './search/search.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AlertComponent } from './alert/alert.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -29,6 +30,7 @@ const appRoutes: Routes = [
     WatchlistComponent,
     HomeComponent,
     SearchComponent,
+    AlertComponent,
   ],
   imports: [
     BrowserModule,

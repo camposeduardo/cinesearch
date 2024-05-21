@@ -19,7 +19,9 @@ export class MovieService {
     return this.http.get<Movie[]>(`${environment.apiUrl}/search/${title}`)
     .pipe(map(response => {
       this.moviesRelatedSubject?.next(response)
-    }));
+    }), (err) => {
+      return err;
+    });
   }
 
   searchMovieByImdbId(imdbId: string) {
