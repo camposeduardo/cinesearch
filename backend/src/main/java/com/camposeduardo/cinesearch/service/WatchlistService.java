@@ -4,6 +4,9 @@ import com.camposeduardo.cinesearch.entities.Movie;
 import com.camposeduardo.cinesearch.entities.MovieInfo;
 import com.camposeduardo.cinesearch.entities.Watchlist;
 import com.camposeduardo.cinesearch.entities.WatchlistMovie;
+import com.camposeduardo.cinesearch.exceptions.MovieInWatchlistException;
+import com.camposeduardo.cinesearch.exceptions.MovieInWatchlistNotFoundException;
+import com.camposeduardo.cinesearch.exceptions.WatchlistNotFoundException;
 import com.camposeduardo.cinesearch.repository.UserRepository;
 import com.camposeduardo.cinesearch.repository.WatchlistMovieRepository;
 import com.camposeduardo.cinesearch.repository.WatchlistRepository;
@@ -37,7 +40,7 @@ public class WatchlistService {
             movie = movieService.addMovie(movie);
         } else {
             if (checkIfMovieExistsInWatchlist(watchlist.getId(), movieInDB)) {
-                throw new InputMismatchException("Movie already in watchlist");
+                throw new MovieInWatchlistException();
             }
             else {
                 movie = movieInDB;
@@ -55,7 +58,7 @@ public class WatchlistService {
         Watchlist watchlist = getWatchlist(email);
 
         if (watchlist == null) {
-            return null;
+            throw new WatchlistNotFoundException();
         }
 
         Optional<List<MovieInfo>> allMoviesInWatchlist = watchlistMovieRepository
@@ -66,9 +69,8 @@ public class WatchlistService {
 
     public Watchlist getWatchlist(String email) {
         Optional<Integer> watchListId = userRepository.findWatchlistIdByEmail(email);
-
         if (watchListId.isEmpty()) {
-            return null;
+            throw new WatchlistNotFoundException();
         }
 
         return watchlistRepository.findById(watchListId.get()).orElse(null);
@@ -78,26 +80,38 @@ public class WatchlistService {
         Optional<List<Integer>> allUserMovies = watchlistMovieRepository.
                 findMovieIdByWatchlistId(watchlistId);
         MovieInfo movieInDB = movieService.getMovieByImdbId(movie.getImdbId());
-        return allUserMovies.get().contains(movie.getId());
+        if (movieInDB == null) {
+            movieInDB = movieService.addMovie(movie);
+        }
+        return allUserMovies.get().contains(movieInDB.getId());
+    }
+
+    public boolean checkIfMovieExistsInWatchlist(String email, MovieInfo movie) {
+        Optional<Integer> watchlistId = userRepository.findWatchlistIdByEmail(email);
+        if (watchlistId.isEmpty()) {
+            throw new WatchlistNotFoundException();
+        }
+        System.out.println(checkIfMovieExistsInWatchlist(watchlistId.get(), movie));
+        return checkIfMovieExistsInWatchlist(watchlistId.get(), movie);
     }
 
     public void removeMovieFromWatchlist(String email, MovieInfo movieInfo) {
         Watchlist watchlist = getWatchlist(email);
 
         if (watchlist == null) {
-            throw new RuntimeException("Watchlist is null");
+            throw new WatchlistNotFoundException();
         }
 
         if (!checkIfMovieExistsInWatchlist(watchlist.getId(), movieInfo)) {
-            throw new RuntimeException("Movie doesnt exists in watchlist");
+            throw new MovieInWatchlistNotFoundException();
         }
 
         MovieInfo movie = movieService.getMovieByImdbId(movieInfo.getImdbId());
         Optional<WatchlistMovie> wm = watchlistMovieRepository.findByWatchlistIdAndMovieId(watchlist.getId(),
                 movie.getId());
 
-        if (!wm.isPresent()) {
-            throw new RuntimeException("Movie doesnt exists in watchlist");
+        if (wm.isEmpty()) {
+            throw new MovieInWatchlistNotFoundException();
         }
 
         watchlistMovieRepository.delete(wm.get());

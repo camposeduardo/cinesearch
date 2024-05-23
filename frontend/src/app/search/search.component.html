@@ -33,7 +33,6 @@
         <h3 class="modal-title text-dark" id="exampleModalLabel">{{movieInfo?.title}}</h3>
         <button #closeModal type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <app-alert class="justify-content-center" [message]="alertMessage" [type]="alertType"></app-alert>
       <div class="modal-body text-dark">
         <div class="d-flex justify-content-start mb-5">
           <div>
@@ -44,8 +43,12 @@
             <span><b>Rated: </b>
               <p>{{movieInfo?.rated}}</p>
             </span>
-            <button class="btn btn-warning" (click)="addToWatchlist(movieInfo!)"><i
-                class="bi bi-bookmark-plus-fill"></i> Add to your watchlist</button>
+            <button *ngIf="!movieInWatchlist; else removeButton" class="btn btn-warning" (click)="addToWatchlist(movieInfo!)"><i
+                class="bi bi-bookmark-plus-fill"></i>Add to your watchlist</button>
+            <ng-template #removeButton>
+              <button class="btn btn-danger" (click)="onRemoveMovieFromWatchlistButton(movieInfo!)"><i
+                class="bi bi-bookmark-plus-fill"></i>Remove from watchlist</button>
+            </ng-template>
           </div>
           <div class="movie-info ms-3 d-block">
             <div>

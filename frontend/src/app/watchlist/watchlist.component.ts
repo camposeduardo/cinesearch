@@ -24,7 +24,7 @@ export class WatchlistComponent {
   }
 
   getAllMoviesInWatchlist() {
-    this.watchlistService.getAllMoviesInWatchlist(this.authService.getEmail()).subscribe(
+    this.watchlistService.getAllMoviesInWatchlist().subscribe(
       {
         next: (data) => {
           this.watchlistMovies = data;

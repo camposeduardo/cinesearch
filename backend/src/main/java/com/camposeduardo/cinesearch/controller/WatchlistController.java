@@ -30,8 +30,17 @@ public class WatchlistController {
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<MovieInfo> removeMovieFromWatchlist(@RequestHeader(value="email") String email, @RequestBody MovieInfo movie) {
+    public ResponseEntity<MovieInfo> removeMovieFromWatchlist(@RequestHeader(value="email") String email,
+                                                              @RequestBody MovieInfo movie) {
         watchlistService.removeMovieFromWatchlist(email, movie);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/movie/check")
+    public ResponseEntity<Boolean> checkIfMovieExistsInWatchlist(@RequestParam(value="email") String email,
+                                                                 @RequestBody MovieInfo movie) {
+        return ResponseEntity.ok().body(watchlistService.checkIfMovieExistsInWatchlist(email, movie));
+    }
+
+
 }

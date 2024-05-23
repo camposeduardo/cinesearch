@@ -51,7 +51,7 @@ export class NavbarComponent {
   }
 
   getWatchlist() {
-    this.watchlistService.getAllMoviesInWatchlist("eduardo@email.com").subscribe();
+    this.watchlistService.getAllMoviesInWatchlist().subscribe();
   }
 
 }

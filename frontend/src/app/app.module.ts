@@ -12,6 +12,7 @@ import { SearchComponent } from './search/search.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AlertComponent } from './alert/alert.component';
+import { WatchlistService } from './service/watchlist.service';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -43,7 +44,8 @@ const appRoutes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }],
+    }, WatchlistService],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MovieService } from '../service/movie.service';
 import { Movie } from '../model/Movie';
-import { ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MovieInfo } from '../model/MovieInfo';
 import { WatchlistService } from '../service/watchlist.service';
 import { AuthenticationService } from '../service/authentication.service';
@@ -20,6 +20,8 @@ export class SearchComponent {
 
   titleToSearch!: string;
 
+  movieInWatchlist: boolean = false;
+
   alertMessage: string = '';
   alertType?: 'success' | 'danger';
 
@@ -29,7 +31,6 @@ export class SearchComponent {
 
   constructor(private movieService: MovieService, private watchlistService: WatchlistService,
     private authService: AuthenticationService, private route: ActivatedRoute, private router: Router) {
-
   }
 
   ngOnInit() {
@@ -57,31 +58,53 @@ export class SearchComponent {
   }
 
   getMovieInformation(imdbId: string) {
-    this.movieService.searchMovieByImdbId(imdbId).subscribe(
+    this.movieService.searchMovieByImdbId(imdbId).subscribe({
+      next: (response) => {
+        if (response != null) {
+          this.movieInfo = response;
+          this.verifyIfMovieIsInWatchlist(response);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // Some logic here
+      }
+    }
+    );
+  }
+
+  verifyIfMovieIsInWatchlist(movie: MovieInfo) {
+    this.watchlistService.verifyIfMovieIsInWatchlist(movie).subscribe(
       {
         next: (response) => {
-          if (response != null) {
-            this.movieInfo = response;
+          // simplify this
+          if (response) {
+            this.movieInWatchlist = true;
           }
-        },
-        error: (error: HttpErrorResponse) => {
-          // Some logic here
+          else {
+            this.movieInWatchlist = false;
+          }
         }
       }
     );
   }
 
   addToWatchlist(movie: MovieInfo) {
-    this.watchlistService.addToWatchlist(movie, this.authService.getEmail())
-    .subscribe({
+    this.watchlistService.addToWatchlist(movie)
+      .subscribe({
+        next: (response) => {
+          this.closeModal!.nativeElement.click();
+        },
+        error: (error) => {
+          this.alertMessage = `${error.error.message} `;
+          this.alertType = "danger";
+        }
+      });
+  }
+
+  onRemoveMovieFromWatchlistButton(movie: MovieInfo) {
+    this.watchlistService.removeMovie(movie).subscribe({
       next: (response) => {
-        this.alertMessage =  `${movie.title} added to your watchlist`;
-        this.alertType = "success";
-        //this.closeModal!.nativeElement.click();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.alertMessage =  `${error.message} `;
-        this.alertType = "danger";
+        this.closeModal!.nativeElement.click();
       }
     });
   }

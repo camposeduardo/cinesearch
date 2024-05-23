@@ -3,6 +3,7 @@ package com.camposeduardo.cinesearch.service;
 import com.camposeduardo.cinesearch.entities.Movie;
 import com.camposeduardo.cinesearch.entities.MovieInfo;
 import com.camposeduardo.cinesearch.entities.SearchMovieResponse;
+import com.camposeduardo.cinesearch.exceptions.MovieNotFoundException;
 import com.camposeduardo.cinesearch.repository.MovieRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,14 @@ public class MovieService {
 
         String fullUrl = String.format(url,OMDB_API_KEY, "s", title);
 
-        ResponseEntity<SearchMovieResponse> response = restTemplate.getForEntity(fullUrl , SearchMovieResponse.class);
+        ResponseEntity<SearchMovieResponse> response = restTemplate.getForEntity(fullUrl,
+                SearchMovieResponse.class);
 
-        return Objects.requireNonNull(response.getBody()).movies();
+        if (response.getBody() == null)  {
+            throw new MovieNotFoundException();
+        }
+
+        return response.getBody().movies();
     }
 
     public MovieInfo searchByImdbId(String imdbId) {
@@ -45,7 +51,11 @@ public class MovieService {
 
         ResponseEntity<MovieInfo> response = restTemplate.getForEntity(fullUrl , MovieInfo.class);
 
-        return Objects.requireNonNull(response.getBody());
+        if (response.getBody() == null)  {
+            throw new MovieNotFoundException();
+        }
+
+        return response.getBody();
     }
 
     public MovieInfo addMovie(MovieInfo movie) {
@@ -55,6 +65,7 @@ public class MovieService {
 
     public MovieInfo getMovieByImdbId(String imdbId) {
         Optional<MovieInfo> movie =  movieRepository.findByImdbId(imdbId);
+
         return movie.orElse(null);
     }
 }
