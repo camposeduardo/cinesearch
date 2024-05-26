@@ -4,8 +4,10 @@
   </div>
   <div class="d-flex justify-content-start text-light mb-5" *ngFor="let movie of moviesFounded">
     <div>
-      <a href="#" data-bs-toggle="modal" data-bs-target="#info" (click)="getMovieInformation(movie.imdbId)"><img
-          [src]="movie.poster" alt=""></a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#info" (click)="getMovieInformation(movie.imdbId)">
+        <img *ngIf="movie.poster != 'N/A'; else noPosterAvailable" [src]="movie.poster" alt="">
+        <ng-template #noPosterAvailable><img [src]="noPoster" alt="" class="poster-unavailable"></ng-template>
+      </a>
     </div>
     <div class="movie-info ms-1 d-block">
       <ul>
@@ -13,7 +15,6 @@
           <div>
             <span>
               <h4>{{movie!.title}}</h4>
-
             </span>
           </div>
           <div>
@@ -43,12 +44,18 @@
             <span><b>Rated: </b>
               <p>{{movieInfo?.rated}}</p>
             </span>
-            <button *ngIf="!movieInWatchlist; else removeButton" class="btn btn-warning" (click)="addToWatchlist(movieInfo!)"><i
-                class="bi bi-bookmark-plus-fill"></i>Add to your watchlist</button>
+            <button *ngIf="!userAuthenticate(); else addButton" class="btn btn-warning" (click)="redirect()"
+              ><i class="bi bi-bookmark-plus-fill"></i>Sign In</button>
+            <ng-template #addButton>
+              <button *ngIf="!movieInWatchlist; else removeButton" class="btn btn-success" (click)="addToWatchlist(movieInfo!)"><i
+                  class="bi bi-bookmark-plus-fill"></i>Add to your
+                  watchlist</button>
+            </ng-template>
             <ng-template #removeButton>
               <button class="btn btn-danger" (click)="onRemoveMovieFromWatchlistButton(movieInfo!)"><i
-                class="bi bi-bookmark-plus-fill"></i>Remove from watchlist</button>
+                  class="bi bi-bookmark-plus-fill"></i>Remove from watchlist</button>
             </ng-template>
+
           </div>
           <div class="movie-info ms-3 d-block">
             <div>

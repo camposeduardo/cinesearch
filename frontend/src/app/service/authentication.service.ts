@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { User } from '../model/User';
 import { environment } from 'src/environments/environment.development';
@@ -12,8 +12,6 @@ export class AuthenticationService {
   private userSubject: BehaviorSubject<User> | undefined;
   public user: Observable<User> | undefined;
 
-  private signInOption = true;
-
   constructor(private http: HttpClient, private handler:HttpBackend){
     this.http = new HttpClient(handler);
   }
@@ -22,7 +20,6 @@ export class AuthenticationService {
     return this.http.post<any>(`${environment.apiUrl}/login`, { email, password })
     .pipe(map(response => {
       this.userSubject?.next(response);
-      this.signInOption = false;
       const token = JSON.stringify(response).split(":")[1].replace(/^"|"$/, '').replace('"}', '');
       localStorage.setItem("token", token);
     }));
@@ -32,6 +29,10 @@ export class AuthenticationService {
     return this.http.post<any>(`${environment.apiUrl}/register`, user).pipe(map(response => {
       this.userSubject?.next(response);
     }));
+  }
+
+  checkIfEmailExists(email: string): Observable<boolean> {
+    return this.http.get<boolean>(`${environment.apiUrl}/${email}`);
   }
 
   getEmail() {

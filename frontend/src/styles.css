@@ -1,3 +1,8 @@
 body {
   background-color:  #0c0518;
 }
+
+.poster-unavailable {
+  width: 300px;
+  height: 445px;
+}

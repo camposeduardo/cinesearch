@@ -23,10 +23,10 @@ export class NavbarComponent {
     this.movieService.searchRelatedMovies(this.titleToSearch).subscribe(
       {
         next: (response) => {
-          this.router.navigate(["Search", this.titleToSearch]);
+          this.router.navigate(["/Search", this.titleToSearch]);
         },
         error: (error: HttpErrorResponse) => {
-          // Some logic here
+          this.handleError(error, 'Error searching movies')
         }
       }
     );
@@ -37,21 +37,23 @@ export class NavbarComponent {
   }
 
   showSignButton() {
-    if (localStorage.getItem("token") === null) {
-      this.signInButton = true;
-      return;
-    }
-    this.signInButton = false;
+    this.signInButton = !localStorage.getItem("token");
   }
 
 
   logout() {
     localStorage.clear();
-    this.router.navigate([" "]);
+    this.router.navigate(["/Home"]);
   }
 
   getWatchlist() {
     this.watchlistService.getAllMoviesInWatchlist().subscribe();
+  }
+
+  handleError(error: HttpErrorResponse, message: string) {
+    if (error.status === 401 || error.status === 403) {
+      this.router.navigate(['/SignIn']);
+    }
   }
 
 }

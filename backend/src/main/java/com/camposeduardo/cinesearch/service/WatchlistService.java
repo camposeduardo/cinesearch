@@ -91,7 +91,6 @@ public class WatchlistService {
         if (watchlistId.isEmpty()) {
             throw new WatchlistNotFoundException();
         }
-        System.out.println(checkIfMovieExistsInWatchlist(watchlistId.get(), movie));
         return checkIfMovieExistsInWatchlist(watchlistId.get(), movie);
     }
 

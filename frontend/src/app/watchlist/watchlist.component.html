@@ -6,7 +6,10 @@
     <div class="col-lg-2 mb-5" *ngFor="let movie of watchlistMovies">
       <div class="watchlist-movie">
         <a href="#" data-bs-toggle="modal" data-bs-target="#info"
-          (click)="getMovieInformation(movie.imdbId)"><img class="border border-1" [src]="movie.poster" alt=""></a>
+          (click)="getMovieInformation(movie.imdbId)">
+          <img *ngIf="movie.poster != 'N/A'; else noPosterAvailable" class="border border-1" [src]="movie.poster" alt="">
+          <ng-template #noPosterAvailable><img [src]="noPoster" alt="" class="poster-unavailable"></ng-template>
+        </a>
       </div>
     </div>
   </div>

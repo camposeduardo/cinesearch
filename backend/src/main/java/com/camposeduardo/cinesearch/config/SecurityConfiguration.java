@@ -41,7 +41,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .authorizeHttpRequests(
                         (requests) -> requests
                                 .requestMatchers("/login", "/register", "/search/{title}",
-                                        "/search/imdb/{imdbId}")
+                                        "/search/imdb/{imdbId}", "/{email}")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )

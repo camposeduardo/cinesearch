@@ -65,7 +65,6 @@ public class MovieService {
 
     public MovieInfo getMovieByImdbId(String imdbId) {
         Optional<MovieInfo> movie =  movieRepository.findByImdbId(imdbId);
-
         return movie.orElse(null);
     }
 }

@@ -15,19 +15,17 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class SearchComponent {
 
-  @ViewChild('closeModal') closeModal?: ElementRef;
-  @ViewChild('alert') alert?: ElementRef;
+  @ViewChild('closeModal') closeModal!: ElementRef<HTMLButtonElement>;
 
   titleToSearch!: string;
 
   movieInWatchlist: boolean = false;
 
-  alertMessage: string = '';
-  alertType?: 'success' | 'danger';
-
   moviesFounded: Movie[] | null = [];
 
   movieInfo: MovieInfo | undefined;
+
+  noPoster = '../../assets/no-poster.webp';
 
   constructor(private movieService: MovieService, private watchlistService: WatchlistService,
     private authService: AuthenticationService, private route: ActivatedRoute, private router: Router) {
@@ -36,10 +34,19 @@ export class SearchComponent {
   ngOnInit() {
     this.getMovies();
     this.titleToSearch = "";
+    window.addEventListener('closeModalEvent', this.closeModalListener.bind(this));
   }
 
   ngDoCheck() {
     this.titleToSearch = this.route.snapshot.params['title'];
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('closeModalEvent', this.closeModalListener.bind(this));
+  }
+
+  closeModalListener() {
+    this.closeModal?.nativeElement.click();
   }
 
   getMovies() {
@@ -51,7 +58,7 @@ export class SearchComponent {
           }
         },
         error: (error: HttpErrorResponse) => {
-          // Some logic here
+          this.handleError(error, 'Error retrieving movies')
         }
       }
     );
@@ -62,11 +69,14 @@ export class SearchComponent {
       next: (response) => {
         if (response != null) {
           this.movieInfo = response;
-          this.verifyIfMovieIsInWatchlist(response);
+          if (this.authService.getToken() != null) {
+            this.verifyIfMovieIsInWatchlist(response);
+          }
+
         }
       },
       error: (error: HttpErrorResponse) => {
-        // Some logic here
+        this.handleError(error, 'Error retrieving movie information')
       }
     }
     );
@@ -76,40 +86,45 @@ export class SearchComponent {
     this.watchlistService.verifyIfMovieIsInWatchlist(movie).subscribe(
       {
         next: (response) => {
-          // simplify this
-          if (response) {
-            this.movieInWatchlist = true;
-          }
-          else {
-            this.movieInWatchlist = false;
-          }
+          this.movieInWatchlist = response;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.handleError(error, 'Error checking watchlist')
         }
       }
     );
   }
 
   addToWatchlist(movie: MovieInfo) {
-    this.watchlistService.addToWatchlist(movie)
-      .subscribe({
-        next: (response) => {
-          this.closeModal!.nativeElement.click();
-        },
-        error: (error) => {
-          this.alertMessage = `${error.error.message} `;
-          this.alertType = "danger";
-        }
-      });
+    this.watchlistService.addToWatchlist(movie).subscribe({
+      next: () => this.closeModalListener(),
+      error: (error: HttpErrorResponse) => this.handleError(error, 'Error adding to watchlist')
+    });
+
   }
 
   onRemoveMovieFromWatchlistButton(movie: MovieInfo) {
     this.watchlistService.removeMovie(movie).subscribe({
-      next: (response) => {
-        this.closeModal!.nativeElement.click();
-      }
+      next: () => this.closeModalListener(),
+      error: (error: HttpErrorResponse) => this.handleError(error, 'Error removing from watchlist')
     });
   }
 
+  userAuthenticate(): boolean {
+    return !!this.authService.getToken();
+  }
 
+  redirect() {
+    this.closeModalListener();
+    this.router.navigate(["/SignIn"]);
+  }
+
+  handleError(error: HttpErrorResponse, message: string) {
+    if (error.status === 401 || error.status === 403) {
+      window.dispatchEvent(new CustomEvent('closeModalEvent'));
+      this.router.navigate(['/SignIn']);
+    }
+  }
 }
 
 

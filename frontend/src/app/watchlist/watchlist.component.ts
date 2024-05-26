@@ -17,10 +17,25 @@ export class WatchlistComponent {
   watchlistMovies: MovieInfo[] = [];
   movieInfo: MovieInfo | undefined;
 
+  noPoster = '../../assets/no-poster.webp';
+
   constructor(private watchlistService: WatchlistService, private authService: AuthenticationService, private router: Router) { }
 
   ngOnInit() {
-    this.getAllMoviesInWatchlist();
+    window.addEventListener('closeModalEvent', this.closeModalListener.bind(this));
+    if (this.authService.getToken() != null) {
+      this.getAllMoviesInWatchlist();
+    } else {
+      this.router.navigate(["/SignIn"]);
+    }
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('closeModalEvent', this.closeModalListener.bind(this));
+  }
+
+  closeModalListener() {
+    this.closeModal?.nativeElement.click();
   }
 
   getAllMoviesInWatchlist() {
@@ -30,12 +45,11 @@ export class WatchlistComponent {
           this.watchlistMovies = data;
         },
         error: (error: HttpErrorResponse) => {
-          // Some logic here
+          this.handleError(error, 'Error retrieving movies from watchlist');
         }
       }
     );
   }
-
 
   getMovieInformation(imdbId: string) {
     this.movieInfo = this.watchlistMovies?.find((movie) => movie.imdbId === imdbId);
@@ -44,15 +58,21 @@ export class WatchlistComponent {
   onRemoveMovie(movieInfo: MovieInfo) {
     this.watchlistService.removeMovie(movieInfo).subscribe({
       next: (response) => {
-        this.closeModal!.nativeElement.click();
         this.getAllMoviesInWatchlist();
+        this.closeModalListener();
       },
       error: (error: HttpErrorResponse) => {
-        // Some logic here
+        this.handleError(error, 'Error on remove movie from watchlist');
       }
     });
   }
 
+  handleError(error: HttpErrorResponse, message: string) {
+    if (error.status === 401 || error.status === 403) {
+      window.dispatchEvent(new CustomEvent('closeModalEvent'));
+      this.router.navigate(['/SignIn']);
+    }
+  }
 
 
 }

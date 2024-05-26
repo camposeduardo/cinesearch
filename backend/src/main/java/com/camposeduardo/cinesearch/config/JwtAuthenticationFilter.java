@@ -27,12 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    /*
-    private static List<String> skipFilterUrls = Arrays.asList("/search/{title}", "/search/imdb/{imdbId}");
+
+    private static List<String> skipFilterUrls = Arrays.asList("/search/{title}", "/search/imdb/{imdbId}", "/{email}");
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return skipFilterUrls.stream().anyMatch(url -> new AntPathRequestMatcher(url).matches(request));
-    }*/
+    }
 
     @Override
     protected void doFilterInternal
