@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 @Service
 public class MovieService {
 
-    @Value("${omdbapi.url}")
-    private String url;
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -31,10 +28,15 @@ public class MovieService {
     private MovieRepository movieRepository;
 
     private final String OMDB_API_KEY = System.getenv("OMDB_API_KEY");
+    private final String url = "http://www.omdbapi.com/?apikey=%s&%s=%s&type=movie";
 
     public List<Movie> search(String title) {
 
-        String fullUrl = String.format(url,OMDB_API_KEY, "s", title);
+        if (title == null || title.isBlank()) {
+            throw new MovieNotFoundException();
+        }
+
+        String fullUrl = String.format(url, OMDB_API_KEY, "s", title);
 
         ResponseEntity<SearchMovieResponse> response = restTemplate.getForEntity(fullUrl,
                 SearchMovieResponse.class);
@@ -47,6 +49,11 @@ public class MovieService {
     }
 
     public MovieInfo searchByImdbId(String imdbId) {
+
+        if (imdbId == null || imdbId.isBlank()) {
+            throw new MovieNotFoundException();
+        }
+
         String fullUrl = String.format(url, OMDB_API_KEY, "i", imdbId);
 
         ResponseEntity<MovieInfo> response = restTemplate.getForEntity(fullUrl , MovieInfo.class);
@@ -59,12 +66,22 @@ public class MovieService {
     }
 
     public MovieInfo addMovie(MovieInfo movie) {
+
+        if (movie.getTitle() == null || movie.getYear() == null || movie.getImdbId() == null) {
+            throw new MovieNotFoundException();
+        }
+
         Optional<MovieInfo> movieToSearchInDB = movieRepository.findByImdbId(movie.getImdbId());
         return movieToSearchInDB.orElseGet(() -> movieRepository.save(movie));
     }
 
     public MovieInfo getMovieByImdbId(String imdbId) {
+
+        if (imdbId == null || imdbId.isBlank()) {
+            throw new MovieNotFoundException();
+        }
         Optional<MovieInfo> movie =  movieRepository.findByImdbId(imdbId);
+
         return movie.orElse(null);
     }
 }

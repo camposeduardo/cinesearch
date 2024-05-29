@@ -18,6 +18,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class WatchlistService {
     @Autowired
@@ -32,7 +33,7 @@ public class WatchlistService {
     @Autowired
     private MovieService movieService;
 
-    public MovieInfo addMovieToWatchlist(String email, MovieInfo movie) throws Exception {
+    public MovieInfo addMovieToWatchlist(String email, MovieInfo movie){
         Watchlist watchlist = getWatchlist(email);
         MovieInfo movieInDB = movieService.getMovieByImdbId(movie.getImdbId());
 
@@ -68,7 +69,13 @@ public class WatchlistService {
     }
 
     public Watchlist getWatchlist(String email) {
+
+        if (email == null || email.isBlank()) {
+            throw new WatchlistNotFoundException();
+        }
+
         Optional<Integer> watchListId = userRepository.findWatchlistIdByEmail(email);
+
         if (watchListId.isEmpty()) {
             throw new WatchlistNotFoundException();
         }
@@ -80,6 +87,7 @@ public class WatchlistService {
         Optional<List<Integer>> allUserMovies = watchlistMovieRepository.
                 findMovieIdByWatchlistId(watchlistId);
         MovieInfo movieInDB = movieService.getMovieByImdbId(movie.getImdbId());
+
         if (movieInDB == null) {
             movieInDB = movieService.addMovie(movie);
         }
