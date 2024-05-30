@@ -2,35 +2,28 @@ package com.camposeduardo.cinesearch.controller;
 
 import com.camposeduardo.cinesearch.entities.Movie;
 import com.camposeduardo.cinesearch.entities.MovieInfo;
-import com.camposeduardo.cinesearch.entities.SearchMovieResponse;
 import com.camposeduardo.cinesearch.exceptions.MovieNotFoundException;
-import com.camposeduardo.cinesearch.service.AuthenticationService;
 import com.camposeduardo.cinesearch.service.JwtService;
 import com.camposeduardo.cinesearch.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.Null;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(SearchMovieController.class)
 public class SearchMovieControllerTest {
 
@@ -49,8 +42,13 @@ public class SearchMovieControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    public void it_should_return_a_list_of_movies() throws Exception {
+    public void itShouldReturnListOfMovies() throws Exception {
 
         String title = "Movie";
 
@@ -70,7 +68,7 @@ public class SearchMovieControllerTest {
     }
 
     @Test
-    public void it_should_throw_an_exception_when_title_is_blank() throws Exception {
+    public void itShouldThrowAnExceptionWhenTitleIsBlank() throws Exception {
 
         String title = " ";
 
@@ -85,7 +83,7 @@ public class SearchMovieControllerTest {
     }
 
     @Test
-    public void it_should_throw_an_exception_when_movies_are_not_founded() throws Exception {
+    public void itShouldThrowAnExceptionWhenMoviesAreNotFounded() throws Exception {
 
         String title = "NonExistentMovie";
 
@@ -99,7 +97,7 @@ public class SearchMovieControllerTest {
     }
 
     @Test
-    public void it_should_return_a_movie_by_imdb_id() throws Exception {
+    public void itShouldReturnMovieByImdbId() throws Exception {
 
         MovieInfo movie = new MovieInfo(
                 1,
@@ -118,7 +116,6 @@ public class SearchMovieControllerTest {
         );
 
         String imdbId = "tt0111161";
-
 
         when(movieService.searchByImdbId(imdbId)).thenReturn(movie);
 

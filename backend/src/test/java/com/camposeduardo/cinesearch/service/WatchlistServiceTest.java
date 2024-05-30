@@ -3,6 +3,7 @@ package com.camposeduardo.cinesearch.service;
 import com.camposeduardo.cinesearch.entities.MovieInfo;
 import com.camposeduardo.cinesearch.entities.Watchlist;
 import com.camposeduardo.cinesearch.entities.WatchlistMovie;
+import com.camposeduardo.cinesearch.exceptions.MovieInWatchlistException;
 import com.camposeduardo.cinesearch.exceptions.WatchlistNotFoundException;
 import com.camposeduardo.cinesearch.repository.MovieRepository;
 import com.camposeduardo.cinesearch.repository.UserRepository;
@@ -81,7 +82,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void testGetWatchlistByEmailWhenWatchlistExists() {
+    public void itShouldReturnWatchlistWhenGetWatchlistByEmailWhenWatchlistExists() {
         String email = "test@example.com";
 
         when(userRepository.findWatchlistIdByEmail(email)).thenReturn(Optional.of(watchlist.getId()));
@@ -94,7 +95,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void shouldThrowAExceptionWhenGetWatchlistByEmailIsBlank() {
+    public void itShouldThrowAExceptionWhenGetWatchlistByEmailIsBlank() {
         String email = " ";
 
         assertThrows(WatchlistNotFoundException.class, () -> {
@@ -103,7 +104,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenWatchlistDoesntExists() {
+    public void itShouldThrowExceptionWhenWatchlistDoesntExists() {
         String email = "test@email";
 
         when(userRepository.findWatchlistIdByEmail(email)).thenReturn(Optional.empty());
@@ -114,7 +115,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueIfMovieIsInWatchlist() {
+    public void itShouldReturnTrueIfMovieIsInWatchlist() {
         List<Integer> ids = Arrays.asList(1,2,3,4,5);
         when(watchlistMovieRepository.
                 findMovieIdByWatchlistId(watchlist.getId())).thenReturn(Optional.of(ids));
@@ -124,7 +125,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void shouldReturnFalseIfMovieIsNotInWatchlist() {
+    public void itShouldReturnFalseIfMovieIsNotInWatchlist() {
         List<Integer> ids = Arrays.asList(2,3,4,5);
         when(watchlistMovieRepository.
                 findMovieIdByWatchlistId(watchlist.getId())).thenReturn(Optional.of(ids));
@@ -135,7 +136,7 @@ public class WatchlistServiceTest {
 
 
     @Test
-    public void shouldReturnAMovieWhenAddMovieToWatchlistAndMovieExistsInDBAndNotInWatchlist() {
+    public void itShouldReturnAMovieWhenAddMovieToWatchlistAndMovieExistsInDBAndNotInWatchlist() {
         String email = "test@example.com";
         Optional<Integer> watchlistId = Optional.of(1);
 
@@ -156,7 +157,7 @@ public class WatchlistServiceTest {
     }
 
     @Test
-    public void shouldReturnAMovieWhenAddMovieToWatchlistAndMovieDoesNotExistInDBAndNotInWatchlist() throws Exception {
+    public void itShouldReturnAMovieWhenAddMovieToWatchlistAndMovieDoesNotExistInDBAndNotInWatchlist() throws Exception {
         String email = "test@example.com";
         Optional<Integer> watchlistId = Optional.of(1);
 
@@ -170,6 +171,30 @@ public class WatchlistServiceTest {
         assertEquals(movie, result);
         verify(movieService, times(1)).addMovie(movie);
         verify(watchlistMovieRepository, times(1)).save(any(WatchlistMovie.class));
+    }
+
+    @Test
+    public void itShouldThrowAnExceptionWhenAddMovieToWatchlistAndMovieExistsInWatchlist() {
+        String email = "test@example.com";
+        Optional<Integer> watchlistId = Optional.of(1);
+
+        when(userRepository.findWatchlistIdByEmail(email)).thenReturn(watchlistId);
+        when(watchlistRepository.findById(watchlistId.get())).thenReturn(Optional.of(watchlist));
+        when(movieService.getMovieByImdbId(movie.getImdbId())).thenReturn(movie);
+
+        List<Integer> movieIds = new ArrayList<>();
+        movieIds.add(movie.getId());
+        Optional<List<Integer>> allUserMovies = Optional.of(movieIds);
+
+        when(watchlistMovieRepository.findMovieIdByWatchlistId(watchlist.getId())).thenReturn(allUserMovies);
+        when(movieService.getMovieByImdbId(movie.getImdbId())).thenReturn(movie);
+
+        assertThrows(MovieInWatchlistException.class, () -> {
+            watchlistService.addMovieToWatchlist(email, movie);
+        });
+
+        verify(movieService, times(0)).addMovie(movie);
+        verify(watchlistMovieRepository, times(0)).save(any(WatchlistMovie.class));
     }
 
     @Test

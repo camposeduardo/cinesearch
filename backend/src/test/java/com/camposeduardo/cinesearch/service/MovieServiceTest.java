@@ -20,9 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,7 +61,7 @@ public class MovieServiceTest {
 
 
     @Test
-    public void it_should_throw_an_exception_when_title_is_blank() {
+    public void itShouldThrowAnExceptionWhenTitleIsBlank() {
         String title = " ";
 
         assertThrows(MovieNotFoundException.class, () -> {
@@ -72,7 +70,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_throw_an_exception_when_response_body_is_null() {
+    public void itShouldThrowAnExceptionWhenResponseBodyIsNull() {
         String title = "Inception";
         String fullUrl = "http://www.omdbapi.com/?apikey="+ OMDB_API_KEY + "&s=" + title+ "&type=movie";
 
@@ -87,7 +85,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_return_movies_when_title_is_valid() {
+    public void itShouldReturnMoviesWhenTitleIsValid() {
         String title = "Inception";
         String fullUrl = "http://www.omdbapi.com/?apikey="+ OMDB_API_KEY + "&s=" + title+ "&type=movie";
 
@@ -106,7 +104,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_return_a_single_movie_when_title_is_valid() {
+    public void itShouldReturnSingleMovieWhenTitleIsValid() {
         String imdbId = "tt0111161";
         String fullUrl = "http://www.omdbapi.com/?apikey="+ OMDB_API_KEY + "&i=" + imdbId + "&type=movie";
 
@@ -133,7 +131,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_throw_an_exception_when_imdb_id_is_blank() {
+    public void itShouldThrowAnExceptionWhenImdbIdIsBlank() {
 
         String imdbId = " ";
 
@@ -144,7 +142,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_return_a_movie_when_save_in_db_and_movie_exists() {
+    public void itShouldReturnMovieWhenSaveInDBAndMovieExists() {
 
         when(movieRepository.findByImdbId(movie.getImdbId())).thenReturn(Optional.of(movie));
 
@@ -154,8 +152,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_return_a_movie_when_save_in_db_and_movie_does_not_exist() {
-
+    public void itShouldReturnMovieWhenSaveInDBAndMovieDoesNotExist() {
 
         when(movieRepository.findByImdbId(movie.getImdbId())).thenReturn(Optional.empty());
         when(movieRepository.save(movie)).thenReturn(movie);
@@ -168,7 +165,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_throw_an_exception_when_movie_is_null() {
+    public void itShouldThrowAnExceptionWhenMovieIsNull() {
 
         MovieInfo saveMovie = new MovieInfo();
 
@@ -179,7 +176,7 @@ public class MovieServiceTest {
 
 
     @Test
-    public void it_should_return_a_movie_when_getMovieByImdbId_and_movie_exists() {
+    public void itShouldReturnAMovieWhenGetMovieByImdbIdAndMovieExists() {
 
         when(movieRepository.findByImdbId(movie.getImdbId())).thenReturn(Optional.of(movie));
 
@@ -190,7 +187,7 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void it_should_return_null_when_getMovieByImdbId_and_movie_does_not_exist() {
+    public void itShouldReturnNullWhenGetMovieByImdbIdAndMovieDoesNotExist() {
 
         when(movieRepository.findByImdbId(movie.getImdbId())).thenReturn(Optional.empty());
 

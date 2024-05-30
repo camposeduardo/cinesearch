@@ -1,6 +1,5 @@
 package com.camposeduardo.cinesearch.service;
 
-import com.camposeduardo.cinesearch.entities.Movie;
 import com.camposeduardo.cinesearch.entities.MovieInfo;
 import com.camposeduardo.cinesearch.entities.Watchlist;
 import com.camposeduardo.cinesearch.entities.WatchlistMovie;
@@ -10,11 +9,9 @@ import com.camposeduardo.cinesearch.exceptions.WatchlistNotFoundException;
 import com.camposeduardo.cinesearch.repository.UserRepository;
 import com.camposeduardo.cinesearch.repository.WatchlistMovieRepository;
 import com.camposeduardo.cinesearch.repository.WatchlistRepository;
-import com.camposeduardo.cinesearch.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +62,8 @@ public class WatchlistService {
         Optional<List<MovieInfo>> allMoviesInWatchlist = watchlistMovieRepository
                 .findMoviesByWatchlistId(watchlist.getId());
 
-        return allMoviesInWatchlist.get();
+        return allMoviesInWatchlist.orElse(null);
+
     }
 
     public Watchlist getWatchlist(String email) {

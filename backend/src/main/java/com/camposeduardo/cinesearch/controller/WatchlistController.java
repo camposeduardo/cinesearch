@@ -20,7 +20,7 @@ public class WatchlistController {
 
     @PostMapping("/add")
     public ResponseEntity<MovieInfo> addToWatchlist(@RequestBody MovieInfo movie,
-                                                    @RequestParam(value="email") String email) throws Exception {
+                                                    @RequestParam(value="email") String email) {
         return ResponseEntity.ok().body(watchlistService.addMovieToWatchlist(email,movie));
     }
 
