@@ -2,6 +2,18 @@
 
 CineSearch is a web application developed to help users create and manage a watchlist of movies. The application uses the OMDB API to fetch movie information.
 
+
+<p align="center">
+    <p>
+        <img src="assets/home-page.png" width="400px">
+        <img src="assets/search.png"  width="400px">
+    </p>
+    <p>
+        <img src="assets/watchlist.png" width="400px">
+        <img src="assets/movie-details.png" width="400px">
+    </p>
+</p>
+
 ## 🛠️ Technologies Used
 
 - **Front-end**: Angular
